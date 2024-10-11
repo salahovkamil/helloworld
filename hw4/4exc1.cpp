@@ -1,79 +1,65 @@
 #include <iostream>
-#include <string>
+#include <vector>
+#include <stdexcept>
 
-using namespace std;
+struct Vector {
+    std::vector<double> elements;
 
+    // Конструктор для создания n-мерного вектора
+    Vector(std::initializer_list<double> vals) : elements(vals) {}
 
-struct Author {
-    string firstName;  
-    string lastName;   
-};
-
-struct Book {
-    string title;          
-    Author author;        
-    int year;             
-    int pageCount;        
-    Book() : title("Неизвестно"), year(0), pageCount(0) {
-        author.firstName = "Неизвестно";
-        author.lastName = "Неизвестно";
+    // Функция умножения вектора на число
+    Vector operator*(double scalar) const {
+        Vector result(*this); // Копируем текущий вектор
+        for (auto& elem : result.elements) {
+            elem *= scalar; // Умножаем каждый элемент на число
+        }
+        return result;
     }
 
-    void displayBook() {
-        cout << "Название книги: " << title << endl;
-        cout << "Автор: " << author.firstName << " " << author.lastName << endl;
-        cout << "Год издания: " << year << endl;
-        cout << "Количество страниц: " << pageCount << endl;
+    // Функция сложения векторов
+    Vector operator+(const Vector& other) const {
+        if (elements.size() != other.elements.size()) {
+            throw std::invalid_argument("Vectors must be of the same dimension");
+        }
+        Vector result(*this); // Копируем текущий вектор
+        for (size_t i = 0; i < result.elements.size(); ++i) {
+            result.elements[i] += other.elements[i]; // Сложение каждого элемента
+        }
+        return result;
+    }
+
+    // Функция скалярного произведения векторов
+    double dot(const Vector& other) const {
+        if (elements.size() != other.elements.size()) {
+            throw std::invalid_argument("Vectors must be of the same dimension");
+        }
+        double result = 0;
+        for (size_t i = 0; i < elements.size(); ++i) {
+            result += elements[i] * other.elements[i]; // Скалярное произведение
+        }
+        return result;
     }
 };
-
-// Функция для создания экземпляра книги на основе пользовательского ввода
-Book createBook() {
-    Book newBook;
-    
-    cout << "Введите название книги: ";
-    getline(cin, newBook.title);
-    
-    cout << "Введите имя автора: ";
-    getline(cin, newBook.author.firstName);
-    
-    cout << "Введите фамилию автора: ";
-    getline(cin, newBook.author.lastName);
-    
-    cout << "Введите год издания: ";
-    cin >> newBook.year;
-    
-    cout << "Введите количество страниц: ";
-    cin >> newBook.pageCount;
-    cin.ignore();  // Для очистки буфера ввода после cin
-
-    return newBook;
-}
 
 int main() {
-    const int bookCount = 3;  // Количество книг в библиотеке
-    Book library[bookCount];   // Массив книг
+    Vector v1 = {1.0, 2.0, 3.0};
+    Vector v2 = {4.0, 5.0, 6.0};
 
-    // Инициализация книг
-    for (int i = 0; i < bookCount; ++i) {
-        char choice;
-        cout << "Хотите ввести данные для книги " << (i + 1) << "? (y/n): ";
-        cin >> choice;
-        cin.ignore();  // Очистка буфера ввода
+    Vector v3 = v1 * 2.0; // Умножение на число
+    Vector v4 = v1 + v2;  // Сложение векторов
+    double dotProduct = v1.dot(v2); // Скалярное произведение
 
-        if (choice == 'y' || choice == 'Y') {
-            library[i] = createBook();  // Создание книги с пользовательским вводом
-        } else {
-            library[i] = Book();  // Инициализация значениями по умолчанию
-        }
-    }
+    // Вывод результатов
+    std::cout << "[v1 v2] = ";
+    for (double elem : v3.elements) std::cout << elem << ' ';
+    std::cout << std::endl;
 
-    // Вывод информации о книгах
-    cout << "\nИнформация о книгах в библиотеке:\n";
-    for (int i = 0; i < bookCount; ++i) {
-        cout << "\nКнига " << (i + 1) << ":" << endl;
-        library[i].displayBook();
-    }
+    std::cout << "v1 + v2 = ";
+    for (double elem : v4.elements) std::cout << elem << ' ';
+    std::cout << std::endl;
+
+    std::cout << "(v1, v2 )= " << dotProduct << std::endl;
 
     return 0;
 }

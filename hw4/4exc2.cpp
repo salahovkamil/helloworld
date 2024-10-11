@@ -3,77 +3,76 @@
 
 using namespace std;
 
-// Структура для автора книги
+
 struct Author {
-    string firstName;
-    string lastName;
+    string firstName;  
+    string lastName;   
 };
 
-// Структура для книги
 struct Book {
-    string title;
-    Author author;
-    int year;
-    int pages;
-
-    // Конструктор по умолчанию
-    Book() {
-        title = "Неизвестно";
+    string title;          
+    Author author;        
+    int year;             
+    int pageCount;        
+    Book() : title("Неизвестно"), year(0), pageCount(0) {
         author.firstName = "Неизвестно";
         author.lastName = "Неизвестно";
-        year = 0;
-        pages = 0;
     }
 
-    // Функция-член для отображения информации о книге
     void displayBook() {
         cout << "Название книги: " << title << endl;
         cout << "Автор: " << author.firstName << " " << author.lastName << endl;
         cout << "Год издания: " << year << endl;
-        cout << "Количество страниц: " << pages << endl;
-        cout << "------------------------------" << endl;
+        cout << "Количество страниц: " << pageCount << endl;
     }
 };
 
-// Функция для создания книги
+// Функция для создания экземпляра книги на основе пользовательского ввода
 Book createBook() {
-    Book book;
+    Book newBook;
+    
     cout << "Введите название книги: ";
-    getline(cin, book.title);
+    getline(cin, newBook.title);
+    
     cout << "Введите имя автора: ";
-    getline(cin, book.author.firstName);
+    getline(cin, newBook.author.firstName);
+    
     cout << "Введите фамилию автора: ";
-    getline(cin, book.author.lastName);
+    getline(cin, newBook.author.lastName);
+    
     cout << "Введите год издания: ";
-    cin >> book.year;
+    cin >> newBook.year;
+    
     cout << "Введите количество страниц: ";
-    cin >> book.pages;
-    cin.ignore(); // Очищаем буфер ввода
-    return book;
+    cin >> newBook.pageCount;
+    cin.ignore();  // Для очистки буфера ввода после cin
+
+    return newBook;
 }
 
 int main() {
-    const int bookCount = 3;
-    Book books[bookCount];
+    const int bookCount = 3;  // Количество книг в библиотеке
+    Book library[bookCount];   // Массив книг
 
     // Инициализация книг
-    for (int i = 0; i < bookCount; i++) {
-        cout << "Книга " << (i + 1) << ":" << endl;
-        cout << "Хотите ввести данные о книге? (да/нет): ";
-        string choice;
-        getline(cin, choice);
+    for (int i = 0; i < bookCount; ++i) {
+        char choice;
+        cout << "Хотите ввести данные для книги " << (i + 1) << "? (y/n): ";
+        cin >> choice;
+        cin.ignore();  // Очистка буфера ввода
 
-        if (choice == "да") {
-            books[i] = createBook();
+        if (choice == 'y' || choice == 'Y') {
+            library[i] = createBook();  // Создание книги с пользовательским вводом
         } else {
-            books[i] = Book(); // Используем значения по умолчанию
+            library[i] = Book();  // Инициализация значениями по умолчанию
         }
     }
 
-    // Вывод информации о каждой книге
-    cout << "\nИнформация о книгах:\n";
-    for (int i = 0; i < bookCount; i++) {
-        books[i].displayBook();
+    // Вывод информации о книгах
+    cout << "\nИнформация о книгах в библиотеке:\n";
+    for (int i = 0; i < bookCount; ++i) {
+        cout << "\nКнига " << (i + 1) << ":" << endl;
+        library[i].displayBook();
     }
 
     return 0;
